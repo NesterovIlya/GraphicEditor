@@ -1,0 +1,9 @@
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\bin\Debug\GraphicEditorApp.exe.config
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\bin\Debug\GraphicEditorApp.exe
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\bin\Debug\GraphicEditorApp.pdb
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Debug\GraphicEditorApp.csprojResolveAssemblyReference.cache
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Debug\GraphicEditorApp.Form1.resources
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Debug\GraphicEditorApp.Properties.Resources.resources
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Debug\GraphicEditorApp.csproj.GenerateResource.Cache
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Debug\GraphicEditorApp.exe
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Debug\GraphicEditorApp.pdb
