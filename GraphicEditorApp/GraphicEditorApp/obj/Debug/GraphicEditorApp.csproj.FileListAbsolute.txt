@@ -7,3 +7,4 @@ D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Debug\GraphicEditorA
 D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Debug\GraphicEditorApp.csproj.GenerateResource.Cache
 D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Debug\GraphicEditorApp.exe
 D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Debug\GraphicEditorApp.pdb
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Debug\GraphicEditorApp.NewProjectForm.resources

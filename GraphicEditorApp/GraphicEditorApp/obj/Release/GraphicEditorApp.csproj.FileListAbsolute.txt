@@ -1,0 +1,9 @@
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\bin\Release\GraphicEditorApp.exe.config
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\bin\Release\GraphicEditorApp.exe
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\bin\Release\GraphicEditorApp.pdb
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Release\GraphicEditorApp.Form1.resources
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Release\GraphicEditorApp.NewProjectForm.resources
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Release\GraphicEditorApp.Properties.Resources.resources
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Release\GraphicEditorApp.csproj.GenerateResource.Cache
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Release\GraphicEditorApp.exe
+D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Release\GraphicEditorApp.pdb
