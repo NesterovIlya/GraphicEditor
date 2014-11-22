@@ -7,3 +7,6 @@ D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Release\GraphicEdito
 D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Release\GraphicEditorApp.csproj.GenerateResource.Cache
 D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Release\GraphicEditorApp.exe
 D:\work\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Release\GraphicEditorApp.pdb
+D:\Works\GraphicEditor\GraphicEditorApp\GraphicEditorApp\bin\Release\GraphicEditorApp.exe.config
+D:\Works\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Release\GraphicEditorApp.exe
+D:\Works\GraphicEditor\GraphicEditorApp\GraphicEditorApp\obj\Release\GraphicEditorApp.pdb

@@ -27,6 +27,7 @@ namespace GraphicEditorApp
         private void PathButton_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dialog = new FolderBrowserDialog();
+            dialog.SelectedPath = "D:\\Works\\Temp\\";
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 PathTextBox.Text = dialog.SelectedPath;
@@ -76,14 +77,14 @@ namespace GraphicEditorApp
                 return false;
             }
 
-            DirectoryInfo projectDir = new DirectoryInfo(PathTextBox.Text + "\\" + InputNameTextBox.Text);
+            FileInfo projectFile = new FileInfo(PathTextBox.Text + "\\" + InputNameTextBox.Text+".gpt");
 
-            if (projectDir.Exists)
+            if (projectFile.Exists)
             {
                 var result = MessageBox.Show("Проект с таким названием уже существует. Перезаписать его?", "", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
-                    projectDir.Delete(true);
+                    projectFile.Delete();
                 }
                 else
                 {
@@ -91,9 +92,9 @@ namespace GraphicEditorApp
                 }
             }
 
-            projectDir.Create();
+            //projectFile.Create();
 
-            project = new Project(InputNameTextBox.Text, width, height, projectDir.FullName);
+            project = new Project(InputNameTextBox.Text, width, height, projectFile.FullName);
 
             return true;
         }

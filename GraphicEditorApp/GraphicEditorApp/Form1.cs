@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -8,6 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GraphicEditorApp.Model;
+using System.Runtime.Serialization;
+using System.Xml;
 
 namespace GraphicEditorApp
 {
@@ -63,7 +66,12 @@ namespace GraphicEditorApp
 
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.InitialDirectory = "D:\\Works\\Temp\\";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
 
+            }
         }
 
         private void NewTab(Project project, Bitmap image = null)
@@ -152,7 +160,8 @@ namespace GraphicEditorApp
                 Bitmap bm = new Bitmap(mask.Image);
                 Graphics g = Graphics.FromImage(bm);
                 painter.UseBrush(g, e.X, e.Y);
-                mask.Image = bm;
+                mask.Image = bm;;
+                g.Dispose();
             }
         }
 
@@ -258,6 +267,19 @@ namespace GraphicEditorApp
                 if (hiddenLayers.Count == 0) return false;
                 return true;
             }
+
+            public void MergeLayers()
+            {
+                Bitmap newCanvas = new Bitmap(background.ClientSize.Width, background.ClientSize.Height);
+                Graphics g = Graphics.FromImage(newCanvas);
+                PictureBox[] visibleLayersArr = visibleLayers.ToArray();
+                for (int i = visibleLayers.Count-1; i >= 0; i--)
+                {
+                    g.DrawImage(visibleLayersArr[i].Image,new Point(0,0));
+                }
+                g.Dispose();
+                projectProperties.Canvas = newCanvas;
+            }
         }
 
 
@@ -299,6 +321,34 @@ namespace GraphicEditorApp
             else BackToolStripMenuItem.Enabled = false;
         }
 
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ActiveProjectView.MergeLayers(); 
+            FileStream writer = new FileStream(ActiveProjectView.projectProperties.ProjectPath, FileMode.Create);
+            DataContractSerializer ser =
+                new DataContractSerializer(typeof(Project));
+            ser.WriteObject(writer, ActiveProjectView.projectProperties);
+            writer.Close();
+        }
 
+
+        /*public static void ReadObject(string fileName)
+        {
+            Console.WriteLine("Deserializing an instance of the object.");
+            FileStream fs = new FileStream(fileName,
+            FileMode.Open);
+            XmlDictionaryReader reader =
+                XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas());
+            DataContractSerializer ser = new DataContractSerializer(typeof(Person));
+
+            // Deserialize the data and read it from the instance.
+            Person deserializedPerson =
+                (Person)ser.ReadObject(reader, true);
+            reader.Close();
+            fs.Close();
+            Console.WriteLine(String.Format("{0} {1}, ID: {2}",
+            deserializedPerson.FirstName, deserializedPerson.LastName,
+            deserializedPerson.ID));
+        }*/
     }
 }
