@@ -46,7 +46,6 @@
             this.ForwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolsPanel = new System.Windows.Forms.Panel();
             this.ChangeBrushSizePanel = new System.Windows.Forms.Panel();
-            this.ViewBrushSizeTextBox = new System.Windows.Forms.TextBox();
             this.ViewbrushSizeTrackBar = new System.Windows.Forms.TrackBar();
             this.BrushSizeButton = new System.Windows.Forms.Button();
             this.ColorButton = new System.Windows.Forms.Button();
@@ -199,30 +198,22 @@
             // ChangeBrushSizePanel
             // 
             this.ChangeBrushSizePanel.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.ChangeBrushSizePanel.Controls.Add(this.ViewBrushSizeTextBox);
             this.ChangeBrushSizePanel.Controls.Add(this.ViewbrushSizeTrackBar);
             this.ChangeBrushSizePanel.Location = new System.Drawing.Point(3, 201);
             this.ChangeBrushSizePanel.Name = "ChangeBrushSizePanel";
-            this.ChangeBrushSizePanel.Size = new System.Drawing.Size(31, 229);
+            this.ChangeBrushSizePanel.Size = new System.Drawing.Size(31, 199);
             this.ChangeBrushSizePanel.TabIndex = 2;
-            // 
-            // ViewBrushSizeTextBox
-            // 
-            this.ViewBrushSizeTextBox.Location = new System.Drawing.Point(3, 3);
-            this.ViewBrushSizeTextBox.Name = "ViewBrushSizeTextBox";
-            this.ViewBrushSizeTextBox.Size = new System.Drawing.Size(24, 20);
-            this.ViewBrushSizeTextBox.TabIndex = 4;
             // 
             // ViewbrushSizeTrackBar
             // 
             this.ViewbrushSizeTrackBar.AutoSize = false;
             this.ViewbrushSizeTrackBar.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.ViewbrushSizeTrackBar.Location = new System.Drawing.Point(3, 29);
+            this.ViewbrushSizeTrackBar.Location = new System.Drawing.Point(3, 3);
             this.ViewbrushSizeTrackBar.Maximum = 20;
             this.ViewbrushSizeTrackBar.Minimum = 1;
             this.ViewbrushSizeTrackBar.Name = "ViewbrushSizeTrackBar";
             this.ViewbrushSizeTrackBar.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.ViewbrushSizeTrackBar.Size = new System.Drawing.Size(24, 196);
+            this.ViewbrushSizeTrackBar.Size = new System.Drawing.Size(24, 193);
             this.ViewbrushSizeTrackBar.TabIndex = 3;
             this.ViewbrushSizeTrackBar.TickStyle = System.Windows.Forms.TickStyle.None;
             this.ViewbrushSizeTrackBar.Value = 1;
@@ -238,6 +229,7 @@
             this.BrushSizeButton.Size = new System.Drawing.Size(31, 27);
             this.BrushSizeButton.TabIndex = 3;
             this.BrushSizeButton.UseVisualStyleBackColor = false;
+            this.BrushSizeButton.Click += new System.EventHandler(this.BrushSizeButton_Click);
             // 
             // ColorButton
             // 
@@ -259,6 +251,7 @@
             this.ErraserButton.Size = new System.Drawing.Size(31, 27);
             this.ErraserButton.TabIndex = 2;
             this.ErraserButton.UseVisualStyleBackColor = true;
+            this.ErraserButton.Click += new System.EventHandler(this.ErraserButton_Click);
             // 
             // EllipseButton
             // 
@@ -269,6 +262,7 @@
             this.EllipseButton.Size = new System.Drawing.Size(31, 27);
             this.EllipseButton.TabIndex = 2;
             this.EllipseButton.UseVisualStyleBackColor = true;
+            this.EllipseButton.Click += new System.EventHandler(this.EllipseButton_Click);
             // 
             // RecButton
             // 
@@ -279,6 +273,7 @@
             this.RecButton.Size = new System.Drawing.Size(31, 27);
             this.RecButton.TabIndex = 2;
             this.RecButton.UseVisualStyleBackColor = true;
+            this.RecButton.Click += new System.EventHandler(this.RecButton_Click);
             // 
             // BrushButton
             // 
@@ -290,6 +285,7 @@
             this.BrushButton.Size = new System.Drawing.Size(31, 27);
             this.BrushButton.TabIndex = 0;
             this.BrushButton.UseVisualStyleBackColor = false;
+            this.BrushButton.Click += new System.EventHandler(this.BrushButton_Click);
             // 
             // TabControl
             // 
@@ -322,7 +318,6 @@
             this.menuStrip1.PerformLayout();
             this.ToolsPanel.ResumeLayout(false);
             this.ChangeBrushSizePanel.ResumeLayout(false);
-            this.ChangeBrushSizePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ViewbrushSizeTrackBar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -342,7 +337,6 @@
         private System.Windows.Forms.Button BrushButton;
         private System.Windows.Forms.Panel ChangeBrushSizePanel;
         private System.Windows.Forms.Button BrushSizeButton;
-        private System.Windows.Forms.TextBox ViewBrushSizeTextBox;
         private System.Windows.Forms.TrackBar ViewbrushSizeTrackBar;
         private System.Windows.Forms.ToolStripMenuItem CreateToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem OpenToolStripMenuItem;

@@ -27,6 +27,10 @@ namespace GraphicEditorApp
 
         private PictureBox mask;
 
+        private bool BrushSizeSwitcherFlag = false;
+
+        private Point mouseDownCoord;
+
         public Form1()
         {
             InitializeComponent();
@@ -34,14 +38,17 @@ namespace GraphicEditorApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            // начальная инициализация
             this.DoubleBuffered = true;
             this.MinimumSize = new Size(300,200);
             Projects = new List<ProjectView>();
             ColorButton.BackColor = Color.Black;
             ActiveTool = Tools.BRUSH;
-            painter = new Painter(ColorButton.BackColor);
+            painter = new Painter(ColorButton.BackColor, 1);
+            ChangeBrushSizePanel.Hide();
         }
 
+        // выбор цвета
         private void ColorButton_Click(object sender, EventArgs e)
         {
             ColorDialog dialog = new ColorDialog();
@@ -56,7 +63,7 @@ namespace GraphicEditorApp
             }
         }
 
-
+        //создание проекта
         private void CreateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var newProjectForm = new NewProjectForm();
@@ -64,7 +71,7 @@ namespace GraphicEditorApp
             if (newProjectForm.project != null) NewTab(newProjectForm.project);
             newProjectForm.Dispose();
         }
-
+        //открытие проекта
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
@@ -79,7 +86,7 @@ namespace GraphicEditorApp
                         return;
                     }
                 }
-
+                
                 FileStream fs = null;
                 XmlDictionaryReader reader = null;
                 try
@@ -173,6 +180,7 @@ namespace GraphicEditorApp
             mask.BringToFront();
             mask.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mask_MouseMove);
             mask.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mask_MouseUp);
+            mask.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mask_MouseDown);
             mask.Cursor = System.Windows.Forms.Cursors.Cross;
             mask.Image = new Bitmap(this.ActiveProjectView.projectProperties.ProjectWidth,
                 this.ActiveProjectView.projectProperties.ProjectHeight);
@@ -194,23 +202,48 @@ namespace GraphicEditorApp
                 {
                     ActiveProjectView = projectView;
                     AddMask();
+                    if (!ActiveProjectView.CanBack()) BackToolStripMenuItem.Enabled = false;
+                    else BackToolStripMenuItem.Enabled = true;
+                    if (!ActiveProjectView.CanForward()) ForwardToolStripMenuItem.Enabled = false;
+                    else ForwardToolStripMenuItem.Enabled = true;
                 }
             }
+        }
+
+        private void mask_MouseDown(object sender, MouseEventArgs e)
+        {
+            this.mouseDownCoord = new Point(e.X,e.Y);
         }
 
         private void mask_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
             {
-                Graphics g = Graphics.FromImage(mask.Image);
-                painter.UseBrush(g, e.X, e.Y);
-                mask.Refresh();
-                g.Dispose();
+                switch (ActiveTool)
+                {
+                    case Tools.BRUSH:
+                        {
+                            Graphics g = Graphics.FromImage(mask.Image);
+                            painter.UseBrush(g, e.X, e.Y);
+                            mask.Refresh();
+                            g.Dispose();
+                            break;
+                        }
+                    case Tools.ERRAISER:
+                        {
+                            Graphics g = Graphics.FromImage(mask.Image);
+                            painter.UseErraiser(g, e.X, e.Y);
+                            mask.Refresh();
+                            g.Dispose();
+                            break;
+                        }
+                }
             }
         }
 
         private void mask_MouseUp(object sender, MouseEventArgs e)
         {
+            MessageBox.Show("Mouse was down at ("+mouseDownCoord.X+","+mouseDownCoord.Y+")");
             Bitmap bm = new Bitmap(mask.Image);
             mask.Image = new Bitmap(ActiveProjectView.projectProperties.ProjectWidth, ActiveProjectView.projectProperties.ProjectHeight);
             PictureBox layer = new PictureBox();
@@ -235,7 +268,19 @@ namespace GraphicEditorApp
 
         private void ViewbrushSizeTrackBar_Scroll(object sender, EventArgs e)
         {
-            this.painter.brush.Radius = ViewbrushSizeTrackBar.Value*2;
+            switch (ActiveTool)
+            {
+                case Tools.BRUSH:
+                    {
+                        this.painter.brush.Radius = ViewbrushSizeTrackBar.Value;
+                        break;
+                    }
+                case Tools.ERRAISER:
+                    {
+                        this.painter.erraiser.Radius = ViewbrushSizeTrackBar.Value;
+                        break;
+                    }
+            }
         }
 
         private void BackToolStripMenuItem_Click(object sender, EventArgs e)
@@ -425,13 +470,49 @@ namespace GraphicEditorApp
             }
         }
 
-
         private enum Tools
         {
             BRUSH,
             ELLIPSE,
             RECTANGULAR,
             ERRAISER
+        }
+
+        private void BrushButton_Click(object sender, EventArgs e)
+        {
+            ActiveTool = Tools.BRUSH;
+            ViewbrushSizeTrackBar.Value = painter.brush.Radius;
+        }
+
+        private void EllipseButton_Click(object sender, EventArgs e)
+        {
+            ActiveTool = Tools.ELLIPSE;
+        }
+
+        private void RecButton_Click(object sender, EventArgs e)
+        {
+            ActiveTool = Tools.RECTANGULAR;
+        }
+
+        private void ErraserButton_Click(object sender, EventArgs e)
+        {
+            ActiveTool = Tools.ERRAISER;
+            ViewbrushSizeTrackBar.Value = painter.erraiser.Radius;
+        }
+
+        private void BrushSizeButton_Click(object sender, EventArgs e)
+        {
+            if (!BrushSizeSwitcherFlag)
+            {
+                ChangeBrushSizePanel.Show();
+                BrushSizeSwitcherFlag = true;
+            }
+            else
+            {
+                ChangeBrushSizePanel.Hide();
+                BrushSizeSwitcherFlag = false;
+            }
+
         }
     }
 }
