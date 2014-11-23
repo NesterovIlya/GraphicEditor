@@ -56,7 +56,9 @@
     <Compile Include="Model\Painter.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\Tools\Brush.cs" />
+    <Compile Include="Model\Tools\Ellipse.cs" />
     <Compile Include="Model\Tools\Erraiser.cs" />
+    <Compile Include="Model\Tools\Rectangle.cs" />
     <Compile Include="NewProjectForm.cs">
       <SubType>Form</SubType>
     </Compile>

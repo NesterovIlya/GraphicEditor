@@ -70,13 +70,6 @@ namespace GraphicEditorApp
                 return false;
             }
 
-            DirectoryInfo dir = new DirectoryInfo(PathTextBox.Text);
-            if (!dir.Exists)
-            {
-                MessageBox.Show("Указанная папка не существует!");
-                return false;
-            }
-
             FileInfo projectFile = new FileInfo(PathTextBox.Text + "\\" + InputNameTextBox.Text+".gpt");
 
             if (projectFile.Exists)
@@ -92,7 +85,6 @@ namespace GraphicEditorApp
                 }
             }
 
-            //projectFile.Create();
 
             project = new Project(InputNameTextBox.Text, width, height, projectFile.FullName);
 

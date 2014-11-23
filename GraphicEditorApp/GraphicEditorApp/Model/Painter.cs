@@ -18,6 +18,9 @@ namespace GraphicEditorApp.Model
         public Tools.Ellipse ellipse
         { get; private set; }
 
+        public Tools.Rectangle rectangle
+        { get; private set; }
+
         public Color color
         { get; set; }
 
@@ -27,6 +30,7 @@ namespace GraphicEditorApp.Model
             brush = new Tools.Brush(size);
             erraiser = new Tools.Erraiser(size);
             ellipse = new Tools.Ellipse(size);
+            rectangle = new Tools.Rectangle(size);
         }
 
         public void UseBrush(Graphics g, int mousePositionX, int mousePositionY)
@@ -41,7 +45,54 @@ namespace GraphicEditorApp.Model
 
         public void UseEllipse(Graphics g, int mouseDownPositionX, int mouseDownPositionY, int mouseUpPositionX, int mouseUpPositionY)
         {
-            //ellipse.Draw(g, mousePositionX, mousePositionY);
+            if (mouseDownPositionX > mouseUpPositionX)
+            {
+                if (mouseDownPositionY > mouseUpPositionY)
+                {
+                    ellipse.Draw(g, mouseUpPositionX, mouseUpPositionY, color, mouseDownPositionX - mouseUpPositionX, mouseDownPositionY - mouseUpPositionY);
+                }
+                else
+                {
+                    ellipse.Draw(g, mouseUpPositionX, mouseDownPositionY, color, mouseDownPositionX - mouseUpPositionX, mouseUpPositionY - mouseDownPositionY);
+                }
+            }
+            else
+            {
+                if (mouseDownPositionY > mouseUpPositionY)
+                {
+                    ellipse.Draw(g, mouseDownPositionX, mouseUpPositionY, color, mouseUpPositionX - mouseDownPositionX, mouseDownPositionY - mouseUpPositionY);
+                }
+                else
+                {
+                    ellipse.Draw(g, mouseDownPositionX, mouseDownPositionY, color, mouseUpPositionX - mouseDownPositionX, mouseUpPositionY - mouseDownPositionY);
+                }
+            }
+        }
+
+        public void UseRectangle(Graphics g, int mouseDownPositionX, int mouseDownPositionY, int mouseUpPositionX, int mouseUpPositionY)
+        {
+            if (mouseDownPositionX > mouseUpPositionX)
+            {
+                if (mouseDownPositionY > mouseUpPositionY)
+                {
+                    rectangle.Draw(g, mouseUpPositionX, mouseUpPositionY, color, mouseDownPositionX - mouseUpPositionX, mouseDownPositionY - mouseUpPositionY);
+                }
+                else
+                {
+                    rectangle.Draw(g, mouseUpPositionX, mouseDownPositionY, color, mouseDownPositionX - mouseUpPositionX, mouseUpPositionY - mouseDownPositionY);
+                }
+            }
+            else
+            {
+                if (mouseDownPositionY > mouseUpPositionY)
+                {
+                    rectangle.Draw(g, mouseDownPositionX, mouseUpPositionY, color, mouseUpPositionX - mouseDownPositionX, mouseDownPositionY - mouseUpPositionY);
+                }
+                else
+                {
+                    rectangle.Draw(g, mouseDownPositionX, mouseDownPositionY, color, mouseUpPositionX - mouseDownPositionX, mouseUpPositionY - mouseDownPositionY);
+                }
+            }
         }
     }
 }

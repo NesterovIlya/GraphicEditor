@@ -197,7 +197,7 @@
             // 
             // ChangeBrushSizePanel
             // 
-            this.ChangeBrushSizePanel.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.ChangeBrushSizePanel.BackColor = System.Drawing.SystemColors.ControlLight;
             this.ChangeBrushSizePanel.Controls.Add(this.ViewbrushSizeTrackBar);
             this.ChangeBrushSizePanel.Location = new System.Drawing.Point(3, 201);
             this.ChangeBrushSizePanel.Name = "ChangeBrushSizePanel";
@@ -207,6 +207,7 @@
             // ViewbrushSizeTrackBar
             // 
             this.ViewbrushSizeTrackBar.AutoSize = false;
+            this.ViewbrushSizeTrackBar.BackColor = System.Drawing.SystemColors.ControlLight;
             this.ViewbrushSizeTrackBar.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ViewbrushSizeTrackBar.Location = new System.Drawing.Point(3, 3);
             this.ViewbrushSizeTrackBar.Maximum = 20;

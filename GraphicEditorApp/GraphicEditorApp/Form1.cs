@@ -237,19 +237,39 @@ namespace GraphicEditorApp
                             g.Dispose();
                             break;
                         }
+                    case Tools.ELLIPSE:
+                        {
+                            Bitmap bm = new Bitmap(mask.Size.Width, mask.Size.Height);
+                            Graphics g = Graphics.FromImage(bm);
+                            painter.UseEllipse(g,mouseDownCoord.X,mouseDownCoord.Y,e.X, e.Y);
+                            mask.Image = bm;
+                            mask.Refresh();
+                            g.Dispose();
+                            break;
+                        }
+                    case Tools.RECTANGLE:
+                        {
+                            Bitmap bm = new Bitmap(mask.Size.Width, mask.Size.Height);
+                            Graphics g = Graphics.FromImage(bm);
+                            painter.UseRectangle(g, mouseDownCoord.X, mouseDownCoord.Y, e.X, e.Y);
+                            mask.Image = bm;
+                            mask.Refresh();
+                            g.Dispose();
+                            break;
+                        }
                 }
             }
         }
 
         private void mask_MouseUp(object sender, MouseEventArgs e)
         {
+            MessageBox.Show(mouseDownCoord.X + " " + mouseDownCoord.Y + " " + e.X + " " + e.Y);
             MessageBox.Show("Mouse was down at ("+mouseDownCoord.X+","+mouseDownCoord.Y+")");
             Bitmap bm = new Bitmap(mask.Image);
             mask.Image = new Bitmap(ActiveProjectView.projectProperties.ProjectWidth, ActiveProjectView.projectProperties.ProjectHeight);
             PictureBox layer = new PictureBox();
             ActiveProjectView.lastLayer.Controls.Remove(this.mask);
             layer.Controls.Add(this.mask);
-            ActiveProjectView.lastLayer.Controls.Add(layer);
 
             layer.BackColor = System.Drawing.Color.Transparent;
             layer.Location = new System.Drawing.Point(0, 0);
@@ -278,6 +298,16 @@ namespace GraphicEditorApp
                 case Tools.ERRAISER:
                     {
                         this.painter.erraiser.Radius = ViewbrushSizeTrackBar.Value;
+                        break;
+                    }
+                case Tools.ELLIPSE:
+                    {
+                        this.painter.ellipse.Thickness = ViewbrushSizeTrackBar.Value;
+                        break;
+                    }
+                case Tools.RECTANGLE:
+                    {
+                        this.painter.rectangle.Thickness = ViewbrushSizeTrackBar.Value;
                         break;
                     }
             }
@@ -474,7 +504,7 @@ namespace GraphicEditorApp
         {
             BRUSH,
             ELLIPSE,
-            RECTANGULAR,
+            RECTANGLE,
             ERRAISER
         }
 
@@ -487,11 +517,13 @@ namespace GraphicEditorApp
         private void EllipseButton_Click(object sender, EventArgs e)
         {
             ActiveTool = Tools.ELLIPSE;
+            ViewbrushSizeTrackBar.Value = painter.ellipse.Thickness;
         }
 
         private void RecButton_Click(object sender, EventArgs e)
         {
-            ActiveTool = Tools.RECTANGULAR;
+            ActiveTool = Tools.RECTANGLE;
+            ViewbrushSizeTrackBar.Value = painter.rectangle.Thickness;
         }
 
         private void ErraserButton_Click(object sender, EventArgs e)

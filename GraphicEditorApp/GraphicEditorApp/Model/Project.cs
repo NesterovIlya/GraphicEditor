@@ -44,18 +44,4 @@ namespace GraphicEditorApp.Model
             ProjectPath = path;
         }
     }
-
-    public class ProjectComparer : IEqualityComparer<Project>
-    {
-        public bool Equals(Project project1, Project project2)
-        {
-            if (project1.ProjectName.Equals(project2.ProjectName)) return true;
-            else return false;
-        }
-
-        public int GetHashCode(Project project)
-        {
-            return project.ProjectName.GetHashCode();
-        }
-    }
 }

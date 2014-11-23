@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace GraphicEditorApp.Model.Tools
 {
-    public class Ellipse
+    public class Rectangle
     {
-        Pen pen = new Pen(Color.White,1);
+        Pen pen = new Pen(Color.Black,1);
         public int Thickness
         { get
           {
@@ -21,7 +21,7 @@ namespace GraphicEditorApp.Model.Tools
           }
         }
 
-        public Ellipse(int thickness)
+        public Rectangle(int thickness)
         {
             pen.Width = thickness;
         }
@@ -29,7 +29,8 @@ namespace GraphicEditorApp.Model.Tools
         public void Draw(Graphics gr, int MousePositionX, int MousePositionY, Color color, int width, int height)
         {
             pen.Color = color;
-            gr.DrawEllipse(pen, MousePositionX, MousePositionY, width, height);
+            if (width < 3 || height < 3) return;
+            gr.DrawRectangle(pen, new System.Drawing.Rectangle(Math.Abs(MousePositionX), Math.Abs(MousePositionY), Math.Abs(width), Math.Abs(height)));
         }
     }
 }
