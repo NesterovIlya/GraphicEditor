@@ -27,7 +27,7 @@ namespace GraphicEditorApp
         private void PathButton_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dialog = new FolderBrowserDialog();
-            dialog.SelectedPath = "D:\\Works\\Temp\\";
+            dialog.SelectedPath = "D:\\work\\Temp\\";
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 PathTextBox.Text = dialog.SelectedPath;

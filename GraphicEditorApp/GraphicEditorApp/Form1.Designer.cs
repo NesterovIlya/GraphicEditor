@@ -114,12 +114,14 @@
             this.CloseToolStripMenuItem.Name = "CloseToolStripMenuItem";
             this.CloseToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.CloseToolStripMenuItem.Text = "Закрыть";
+            this.CloseToolStripMenuItem.Click += new System.EventHandler(this.CloseToolStripMenuItem_Click);
             // 
             // CloseAllВсеToolStripMenuItem
             // 
             this.CloseAllВсеToolStripMenuItem.Name = "CloseAllВсеToolStripMenuItem";
             this.CloseAllВсеToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.CloseAllВсеToolStripMenuItem.Text = "Закрыть все";
+            this.CloseAllВсеToolStripMenuItem.Click += new System.EventHandler(this.CloseAllВсеToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
@@ -138,6 +140,7 @@
             this.SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem";
             this.SaveAsToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.SaveAsToolStripMenuItem.Text = "Сохранить как";
+            this.SaveAsToolStripMenuItem.Click += new System.EventHandler(this.SaveAsToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
@@ -149,6 +152,7 @@
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
             this.ExitToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
             this.ExitToolStripMenuItem.Text = "Выход";
+            this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
             // EditToolStripMenuItem
             // 
@@ -163,7 +167,7 @@
             // 
             this.BackToolStripMenuItem.Enabled = false;
             this.BackToolStripMenuItem.Name = "BackToolStripMenuItem";
-            this.BackToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.BackToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.BackToolStripMenuItem.Text = "Отменить";
             this.BackToolStripMenuItem.Click += new System.EventHandler(this.BackToolStripMenuItem_Click);
             // 
@@ -171,7 +175,7 @@
             // 
             this.ForwardToolStripMenuItem.Enabled = false;
             this.ForwardToolStripMenuItem.Name = "ForwardToolStripMenuItem";
-            this.ForwardToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.ForwardToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.ForwardToolStripMenuItem.Text = "Вернуть";
             this.ForwardToolStripMenuItem.Click += new System.EventHandler(this.ForwardToolStripMenuItem_Click);
             // 

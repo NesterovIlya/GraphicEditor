@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,8 +27,6 @@ namespace GraphicEditorApp
 
         private PictureBox mask;
 
-        private Bitmap maskCanvas;
-
         public Form1()
         {
             InitializeComponent();
@@ -35,6 +34,8 @@ namespace GraphicEditorApp
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            this.DoubleBuffered = true;
+            this.MinimumSize = new Size(300,200);
             Projects = new List<ProjectView>();
             ColorButton.BackColor = Color.Black;
             ActiveTool = Tools.BRUSH;
@@ -67,10 +68,50 @@ namespace GraphicEditorApp
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
-            dialog.InitialDirectory = "D:\\Works\\Temp\\";
+            dialog.InitialDirectory = "D:\\work\\Temp\\";
             if (dialog.ShowDialog() == DialogResult.OK)
             {
+                foreach (ProjectView projectView in Projects)
+                {
+                    if (projectView.projectProperties.ProjectPath.Equals(dialog.FileName))
+                    {
+                        MessageBox.Show("Проект уже отрыт!");
+                        return;
+                    }
+                }
 
+                FileStream fs = null;
+                XmlDictionaryReader reader = null;
+                try
+                {
+                    fs = new FileStream(dialog.FileName, FileMode.Open);
+                    XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas();
+                    quotas.MaxArrayLength = 100000;
+                    reader = XmlDictionaryReader.CreateTextReader(fs, quotas);
+                    DataContractSerializer ser = new DataContractSerializer(typeof(Project));
+
+                    Project project =
+                        (Project)ser.ReadObject(reader, true);
+
+                    NewTab(project, project.Canvas);
+                }
+                catch (System.Xml.XmlException ex)
+                {
+                    MessageBox.Show("Выбранный файл не является проектом данной программы!");
+                }
+                catch (System.IO.FileNotFoundException ex)
+                {
+                    MessageBox.Show("Файл не найден!");
+                }
+                catch (System.Runtime.Serialization.SerializationException ex)
+                {
+                    MessageBox.Show("Файл поврежден и не может быть открыт!");
+                }
+                finally
+                {
+                    if (reader != null) reader.Dispose();
+                    fs.Close();
+                }
             }
         }
 
@@ -96,10 +137,17 @@ namespace GraphicEditorApp
 
             //Background init
             background.BackColor = System.Drawing.Color.White;
-            if (image != null) background.Image = image;
             background.Location = new System.Drawing.Point(0, 0);
             background.Name = project.ProjectName+"_background";
             background.Size = new System.Drawing.Size(project.ProjectWidth, project.ProjectHeight);
+            if (image != null) background.BackgroundImage = image;
+            else
+            {
+                background.BackgroundImage = new Bitmap(project.ProjectWidth, project.ProjectHeight);
+                Graphics g = Graphics.FromImage(background.BackgroundImage);
+                g.FillRectangle(new SolidBrush(Color.White), 0, 0, project.ProjectWidth, project.ProjectHeight);
+                g.Dispose();
+            }
             background.TabIndex = 0;
             background.TabStop = false;
 
@@ -126,17 +174,14 @@ namespace GraphicEditorApp
             mask.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mask_MouseMove);
             mask.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mask_MouseUp);
             mask.Cursor = System.Windows.Forms.Cursors.Cross;
-            this.maskCanvas = new Bitmap(this.ActiveProjectView.projectProperties.ProjectWidth - 20,
-                this.ActiveProjectView.projectProperties.ProjectHeight - 20);
-            mask.Image = maskCanvas;
-            MessageBox.Show("Mask added to " + this.ActiveProjectView.tabPage.Name);
+            mask.Image = new Bitmap(this.ActiveProjectView.projectProperties.ProjectWidth,
+                this.ActiveProjectView.projectProperties.ProjectHeight);
         }
 
         private void RemoveMask()
         {
             if (mask == null) return;
             this.ActiveProjectView.lastLayer.Controls.Remove(this.mask);
-            MessageBox.Show("Mask removed from " + this.ActiveProjectView.tabPage.Name);
             mask.Dispose();
         }
 
@@ -157,10 +202,9 @@ namespace GraphicEditorApp
         {
             if (e.Button == MouseButtons.Left)
             {
-                Bitmap bm = new Bitmap(mask.Image);
-                Graphics g = Graphics.FromImage(bm);
+                Graphics g = Graphics.FromImage(mask.Image);
                 painter.UseBrush(g, e.X, e.Y);
-                mask.Image = bm;;
+                mask.Refresh();
                 g.Dispose();
             }
         }
@@ -188,18 +232,105 @@ namespace GraphicEditorApp
 
         }
 
+
+        private void ViewbrushSizeTrackBar_Scroll(object sender, EventArgs e)
+        {
+            this.painter.brush.Radius = ViewbrushSizeTrackBar.Value*2;
+        }
+
+        private void BackToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ActiveProjectView.lastLayer.Controls.Remove(this.mask);
+            ActiveProjectView.Back();
+            ActiveProjectView.lastLayer.Controls.Add(this.mask);
+            this.mask.BringToFront();
+            if (ActiveProjectView.CanBack()) BackToolStripMenuItem.Enabled = true;
+            else BackToolStripMenuItem.Enabled = false;
+            if (ActiveProjectView.CanForward()) ForwardToolStripMenuItem.Enabled = true;
+            else ForwardToolStripMenuItem.Enabled = false;
+
+        }
+
+        private void ForwardToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ActiveProjectView.lastLayer.Controls.Remove(this.mask);
+            ActiveProjectView.Forward();
+            ActiveProjectView.lastLayer.Controls.Add(this.mask);
+            this.mask.BringToFront();
+            if (ActiveProjectView.CanForward()) ForwardToolStripMenuItem.Enabled = true;
+            else ForwardToolStripMenuItem.Enabled = false;
+            if (ActiveProjectView.CanBack()) BackToolStripMenuItem.Enabled = true;
+            else BackToolStripMenuItem.Enabled = false;
+        }
+
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ActiveProjectView.MergeLayers(); 
+            FileStream writer = new FileStream(ActiveProjectView.projectProperties.ProjectPath, FileMode.Create);
+            DataContractSerializer ser =
+                new DataContractSerializer(typeof(Project));
+            ser.WriteObject(writer, ActiveProjectView.projectProperties);
+            writer.Close();
+        }
+
+        private void SaveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.Filter = "Images|*.png;*.bmp;*.jpg";
+            ImageFormat format = ImageFormat.Png;
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                string ext = System.IO.Path.GetExtension(dialog.FileName);
+                switch (ext)
+                {
+                    case ".jpg":
+                        format = ImageFormat.Jpeg;
+                        break;
+                    case ".bmp":
+                        format = ImageFormat.Bmp;
+                        break;
+                }
+                ActiveProjectView.MergeLayers();
+                Image img = ActiveProjectView.projectProperties.Canvas;
+                img.Save(dialog.FileName, format);
+            }
+        }
+
+        private void CloseToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Projects.Remove(ActiveProjectView);
+            ActiveProjectView.Dispose();
+        }
+
+        private void CloseAllВсеToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            while (Projects.Count != 0)
+            {
+                Projects.Remove(ActiveProjectView);
+                ActiveProjectView.Dispose();
+            }
+        }
+
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Dispose();
+            this.Close();
+        }
+
+
+
         private class ProjectView
         {
             public Project projectProperties
-            {get; private set;}
+            { get; private set; }
 
             public TabPage tabPage
-            {get; private set;}
+            { get; private set; }
 
             private PictureBox background;
 
             public int nextlayerNumber
-            {get; private set;}
+            { get; private set; }
 
             private Stack<PictureBox> visibleLayers;
             private Stack<PictureBox> hiddenLayers;
@@ -273,12 +404,24 @@ namespace GraphicEditorApp
                 Bitmap newCanvas = new Bitmap(background.ClientSize.Width, background.ClientSize.Height);
                 Graphics g = Graphics.FromImage(newCanvas);
                 PictureBox[] visibleLayersArr = visibleLayers.ToArray();
-                for (int i = visibleLayers.Count-1; i >= 0; i--)
+                g.DrawImage(background.BackgroundImage, new Point(0, 0));
+                for (int i = visibleLayers.Count - 1; i >= 0; i--)
                 {
-                    g.DrawImage(visibleLayersArr[i].Image,new Point(0,0));
+                    g.DrawImage(visibleLayersArr[i].Image, new Point(0, 0));
                 }
                 g.Dispose();
                 projectProperties.Canvas = newCanvas;
+            }
+
+            public void Dispose()
+            {
+                lastLayer.Dispose();
+                projectProperties.Canvas.Dispose();
+                while (hiddenLayers.Count != 0)
+                    hiddenLayers.Pop().Dispose();
+                while (visibleLayers.Count != 0)
+                    visibleLayers.Pop().Dispose();
+                tabPage.Dispose();
             }
         }
 
@@ -290,65 +433,5 @@ namespace GraphicEditorApp
             RECTANGULAR,
             ERRAISER
         }
-
-        private void ViewbrushSizeTrackBar_Scroll(object sender, EventArgs e)
-        {
-            this.painter.brush.Radius = ViewbrushSizeTrackBar.Value;
-        }
-
-        private void BackToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ActiveProjectView.lastLayer.Controls.Remove(this.mask);
-            ActiveProjectView.Back();
-            ActiveProjectView.lastLayer.Controls.Add(this.mask);
-            this.mask.BringToFront();
-            if (ActiveProjectView.CanBack()) BackToolStripMenuItem.Enabled = true;
-            else BackToolStripMenuItem.Enabled = false;
-            if (ActiveProjectView.CanForward()) ForwardToolStripMenuItem.Enabled = true;
-            else ForwardToolStripMenuItem.Enabled = false;
-
-        }
-
-        private void ForwardToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ActiveProjectView.lastLayer.Controls.Remove(this.mask);
-            ActiveProjectView.Forward();
-            ActiveProjectView.lastLayer.Controls.Add(this.mask);
-            this.mask.BringToFront();
-            if (ActiveProjectView.CanForward()) ForwardToolStripMenuItem.Enabled = true;
-            else ForwardToolStripMenuItem.Enabled = false;
-            if (ActiveProjectView.CanBack()) BackToolStripMenuItem.Enabled = true;
-            else BackToolStripMenuItem.Enabled = false;
-        }
-
-        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ActiveProjectView.MergeLayers(); 
-            FileStream writer = new FileStream(ActiveProjectView.projectProperties.ProjectPath, FileMode.Create);
-            DataContractSerializer ser =
-                new DataContractSerializer(typeof(Project));
-            ser.WriteObject(writer, ActiveProjectView.projectProperties);
-            writer.Close();
-        }
-
-
-        /*public static void ReadObject(string fileName)
-        {
-            Console.WriteLine("Deserializing an instance of the object.");
-            FileStream fs = new FileStream(fileName,
-            FileMode.Open);
-            XmlDictionaryReader reader =
-                XmlDictionaryReader.CreateTextReader(fs, new XmlDictionaryReaderQuotas());
-            DataContractSerializer ser = new DataContractSerializer(typeof(Person));
-
-            // Deserialize the data and read it from the instance.
-            Person deserializedPerson =
-                (Person)ser.ReadObject(reader, true);
-            reader.Close();
-            fs.Close();
-            Console.WriteLine(String.Format("{0} {1}, ID: {2}",
-            deserializedPerson.FirstName, deserializedPerson.LastName,
-            deserializedPerson.ID));
-        }*/
     }
 }
