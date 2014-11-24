@@ -29,7 +29,6 @@ namespace GraphicEditorApp.Model.Tools
         public void Draw(Graphics gr, int MousePositionX, int MousePositionY, Color color, int width, int height)
         {
             pen.Color = color;
-            if (width < 3 || height < 3) return;
             gr.DrawRectangle(pen, new System.Drawing.Rectangle(Math.Abs(MousePositionX), Math.Abs(MousePositionY), Math.Abs(width), Math.Abs(height)));
         }
     }

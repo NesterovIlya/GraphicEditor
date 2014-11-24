@@ -28,7 +28,10 @@ namespace GraphicEditorApp.Model
         public string ProjectPath
         { get; private set; }
 
-        [DataMember(Name = "Canvas")]
+        [DataMember(Name = "CanvasPath")]
+        public string CanvasPath
+        { get; private set; }
+
         public Bitmap Canvas
         { get; set; }
 
@@ -36,12 +39,13 @@ namespace GraphicEditorApp.Model
         {
         }
 
-        public Project(string name, int width, int height, string path)
+        public Project(string name, int width, int height, string path, string canvasPath)
         {
             ProjectName = name;
             ProjectWidth = width;
             ProjectHeight = height;
             ProjectPath = path;
+            CanvasPath = canvasPath;
         }
     }
 }

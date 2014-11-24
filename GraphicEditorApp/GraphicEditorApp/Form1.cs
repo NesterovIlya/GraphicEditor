@@ -75,49 +75,88 @@ namespace GraphicEditorApp
         private void OpenToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
-            dialog.InitialDirectory = "D:\\work\\Temp\\";
+            dialog.InitialDirectory = "D:\\Works\\Temp\\";
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                foreach (ProjectView projectView in Projects)
+                string ext = System.IO.Path.GetExtension(dialog.FileName);
+                switch (ext)
                 {
-                    if (projectView.projectProperties.ProjectPath.Equals(dialog.FileName))
-                    {
-                        MessageBox.Show("Проект уже отрыт!");
-                        return;
-                    }
-                }
-                
-                FileStream fs = null;
-                XmlDictionaryReader reader = null;
-                try
-                {
-                    fs = new FileStream(dialog.FileName, FileMode.Open);
-                    XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas();
-                    quotas.MaxArrayLength = 100000;
-                    reader = XmlDictionaryReader.CreateTextReader(fs, quotas);
-                    DataContractSerializer ser = new DataContractSerializer(typeof(Project));
+                    case ".jpg":
+                    case ".bmp":
+                    case ".png":
+                        {
+                            try
+                            {
+                                Bitmap background = new Bitmap(dialog.FileName);
+                                Project project = new Project(
+                                    System.IO.Path.GetFileNameWithoutExtension(dialog.FileName),
+                                    background.Width,
+                                    background.Height,
+                                    System.IO.Path.GetFullPath(dialog.FileName).Replace(ext,".gpt"),
+                                    System.IO.Path.GetFullPath(dialog.FileName).Replace(ext,"_canvas.jpg")
+                                    );
+                                project.Canvas = background;
+                                NewTab(project, project.Canvas);
+                            }
+                            catch (System.IO.FileNotFoundException ex)
+                            {
+                                MessageBox.Show("Файл не найден!");
+                            }
+                            break;
+                        }
+                    case ".gpt":
+                        {
 
-                    Project project =
-                        (Project)ser.ReadObject(reader, true);
+                            foreach (ProjectView projectView in Projects)
+                            {
+                                if (projectView.projectProperties.ProjectPath.Equals(dialog.FileName))
+                                {
+                                    MessageBox.Show("Проект уже отрыт!");
+                                    return;
+                                }
+                            }
 
-                    NewTab(project, project.Canvas);
-                }
-                catch (System.Xml.XmlException ex)
-                {
-                    MessageBox.Show("Выбранный файл не является проектом данной программы!");
-                }
-                catch (System.IO.FileNotFoundException ex)
-                {
-                    MessageBox.Show("Файл не найден!");
-                }
-                catch (System.Runtime.Serialization.SerializationException ex)
-                {
-                    MessageBox.Show("Файл поврежден и не может быть открыт!");
-                }
-                finally
-                {
-                    if (reader != null) reader.Dispose();
-                    fs.Close();
+                            FileStream fs = null;
+                            XmlDictionaryReader reader = null;
+                            try
+                            {
+                                fs = new FileStream(dialog.FileName, FileMode.Open);
+                                XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas();
+                                quotas.MaxArrayLength = 100000;
+                                reader = XmlDictionaryReader.CreateTextReader(fs, quotas);
+                                DataContractSerializer ser = new DataContractSerializer(typeof(Project));
+
+                                Project project =
+                                    (Project)ser.ReadObject(reader, true);
+                                project.Canvas = new Bitmap(project.CanvasPath);
+
+                                NewTab(project, project.Canvas);
+                            }
+                            catch (System.Xml.XmlException ex)
+                            {
+                                MessageBox.Show("Выбранный файл не является проектом данной программы!");
+                            }
+                            catch (System.IO.FileNotFoundException ex)
+                            {
+                                MessageBox.Show("Файл не найден!");
+                            }
+                            /*catch (System.Runtime.Serialization.SerializationException ex)
+                            {
+                                MessageBox.Show("Файл поврежден и не может быть открыт!");
+                                MessageBox.Show(ex.StackTrace);
+                            }*/
+                            finally
+                            {
+                                if (reader != null) reader.Dispose();
+                                fs.Close();
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            MessageBox.Show("Неверный формат файла!");
+                            break;
+                        }
                 }
             }
         }
@@ -173,8 +212,8 @@ namespace GraphicEditorApp
             mask.BackColor = System.Drawing.Color.Transparent;
             mask.Location = new System.Drawing.Point(0, 0);
             mask.Name = "Mask";
-            mask.Size = new System.Drawing.Size(this.ActiveProjectView.projectProperties.ProjectWidth - 20, 
-                this.ActiveProjectView.projectProperties.ProjectHeight - 20);
+            mask.Size = new System.Drawing.Size(this.ActiveProjectView.projectProperties.ProjectWidth, 
+                this.ActiveProjectView.projectProperties.ProjectHeight);
             mask.TabIndex = 0;
             mask.TabStop = false;
             mask.BringToFront();
@@ -263,8 +302,6 @@ namespace GraphicEditorApp
 
         private void mask_MouseUp(object sender, MouseEventArgs e)
         {
-            MessageBox.Show(mouseDownCoord.X + " " + mouseDownCoord.Y + " " + e.X + " " + e.Y);
-            MessageBox.Show("Mouse was down at ("+mouseDownCoord.X+","+mouseDownCoord.Y+")");
             Bitmap bm = new Bitmap(mask.Image);
             mask.Image = new Bitmap(ActiveProjectView.projectProperties.ProjectWidth, ActiveProjectView.projectProperties.ProjectHeight);
             PictureBox layer = new PictureBox();
@@ -345,6 +382,7 @@ namespace GraphicEditorApp
             DataContractSerializer ser =
                 new DataContractSerializer(typeof(Project));
             ser.WriteObject(writer, ActiveProjectView.projectProperties);
+            ActiveProjectView.projectProperties.Canvas.Save(ActiveProjectView.projectProperties.CanvasPath);
             writer.Close();
         }
 
@@ -491,7 +529,7 @@ namespace GraphicEditorApp
             public void Dispose()
             {
                 lastLayer.Dispose();
-                projectProperties.Canvas.Dispose();
+                if (projectProperties.Canvas!=null) projectProperties.Canvas.Dispose();
                 while (hiddenLayers.Count != 0)
                     hiddenLayers.Pop().Dispose();
                 while (visibleLayers.Count != 0)

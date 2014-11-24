@@ -27,7 +27,7 @@ namespace GraphicEditorApp
         private void PathButton_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dialog = new FolderBrowserDialog();
-            dialog.SelectedPath = "D:\\work\\Temp\\";
+            dialog.SelectedPath = "D:\\Works\\Temp\\";
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 PathTextBox.Text = dialog.SelectedPath;
@@ -58,7 +58,7 @@ namespace GraphicEditorApp
                 return false;
             }
             int height;
-            if (!Int32.TryParse(WidthTextBox.Text, out height))
+            if (!Int32.TryParse(HeightTextBox.Text, out height))
             {
                 MessageBox.Show("Неверное значение высоты!");
                 return false;
@@ -86,7 +86,13 @@ namespace GraphicEditorApp
             }
 
 
-            project = new Project(InputNameTextBox.Text, width, height, projectFile.FullName);
+            project = new Project(
+                InputNameTextBox.Text, 
+                width, 
+                height, 
+                projectFile.FullName,
+                System.IO.Path.GetFullPath(projectFile.FullName)+"\\" + InputNameTextBox.Text+ "canvas.jpg"
+                );
 
             return true;
         }
